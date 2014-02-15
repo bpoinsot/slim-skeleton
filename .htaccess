@@ -1,0 +1,27 @@
+AddDefaultCharset UTF-8
+
+Options -Indexes +FollowSymlinks
+
+SetEnv PHP_VER 5_5
+SetEnv REGISTER_GLOBALS 0
+SetEnv MAGIC_QUOTES 0
+SetEnv SESSION_USE_TRANS_SID 0
+
+<FilesMatch "\.(sql|sqlite)$">
+    Deny from all
+    Satisfy All
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /skeleton/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_deflate.c>
+    <FilesMatch "\.(js|css|html?|php)$">
+        SetOutputFilter DEFLATE
+    </FilesMatch>
+</IfModule>
