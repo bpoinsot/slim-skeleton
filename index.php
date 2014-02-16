@@ -121,7 +121,7 @@ R::freeze(true);
  *---------------------------------------------------------------------
  * 
  * Slim Framework is a small but powerfull PHP framework
- * Version : 2.4.0
+ * Version : 2.4.2
  * Website : http://slimframework.com/
  */
 require DIR_VENDORS . 'Slim/Slim.php';
@@ -131,7 +131,8 @@ require DIR_VENDORS . 'Slim/Slim.php';
 $app = new \Slim\Slim(array(
     'debug' => $debug,
     'view' => new \Slim\Views\Twig(),
-    'templates.path' => DIR_LAYOUTS
+    'templates.path' => DIR_LAYOUTS,
+    'routes.case_sensitive' => true
 ));
 // --------------------------------------------------------------------
 
