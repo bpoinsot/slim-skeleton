@@ -162,8 +162,16 @@ class Route
     public function setCallable($callable)
     {
         $matches = array();
-        if (is_string($callable) && preg_match('!^([^\:]+)\:([[:alnum:]]+)$!', $callable, $matches)) {
-            $callable = array(new $matches[1], $matches[2]);
+        if (is_string($callable) && preg_match('!^([^\:]+)\:([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$!', $callable, $matches)) {
+            $class = $matches[1];
+            $method = $matches[2];
+            $callable = function() use ($class, $method) {
+                static $obj = null;
+                if ($obj === null) {
+                    $obj = new $class;
+                }
+                return call_user_func_array(array($obj, $method), func_get_args());
+            };
         }
 
         if (!is_callable($callable)) {
