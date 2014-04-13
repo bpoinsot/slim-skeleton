@@ -8,9 +8,14 @@
  */
 date_default_timezone_set('Europe/Paris');
 ini_set('default_charset', 'UTF-8');
-mb_internal_encoding('UTF-8');
-mb_http_output('UTF-8');
-mb_http_input('UTF-8');
+
+if (!extension_loaded('mbstring')) {
+    die('mbstring is missing!');
+} else {
+    mb_internal_encoding('UTF-8');
+    mb_http_input('UTF-8');
+    mb_http_output('UTF-8');
+}
 // -------------------------------------------------------------------------------------------------
 
 
@@ -23,7 +28,7 @@ mb_http_input('UTF-8');
  * We define two different environments (development & production) switching automatically from one 
  * to the other thanks to the IP address of the server.
  */
-if(in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'))) {
+if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'))) {
     error_reporting(-1);
     ini_set('display_errors', 1);
     $debug = true;
