@@ -111,7 +111,7 @@ session_start();
  *--------------------------------------------------------------------------------------------------
  * 
  * RedBeanPHP is a lightweight, configuration-less ORM library for PHP
- * Version : 3.5.7
+ * Version : 3.5.8
  * Website : http://www.redbeanphp.com
  */
 require DIR_VENDORS . 'Redbean/rb.php';
@@ -128,7 +128,7 @@ R::freeze(true);
  *--------------------------------------------------------------------------------------------------
  * 
  * Slim Framework is a small but powerfull PHP framework
- * Version : 2.4.2
+ * Version : 2.4.3
  * Website : http://slimframework.com
  */
 require DIR_VENDORS . 'Slim/Slim.php';
