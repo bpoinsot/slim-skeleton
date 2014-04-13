@@ -14,7 +14,7 @@ SetEnv SESSION_USE_TRANS_SID 0
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /skeleton/
+    RewriteBase /slim-skeleton/
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [QSA,L]

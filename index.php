@@ -85,8 +85,8 @@ define('DIR_VENDORS', DIR_APP . 'vendors' . DIR_SEP);
  * We need to define several constants in order to use them with the template engine and get them 
  * updated quickly and easily if needed.
  */
-define('APP_BASE', '/skeleton');        # no trailing slash
-define('APP_NAME', 'Skeletin app');
+define('APP_BASE', '/slim-skeleton');        # no trailing slash
+define('APP_NAME', 'Skeleton app');
 define('APP_AUTH', '@bpoinsot');
 // -------------------------------------------------------------------------------------------------
 
