@@ -163,7 +163,19 @@ $view->parserOptions = array(
     'strict_variables' => true,
     //'cache' => DIR_CACHE
 );
+// -------------------------------------------------------------------------------------------------
 
+
+
+/*
+ *--------------------------------------------------------------------------------------------------
+ * SLIM CUSTOM VIEW FRO TWIG
+ *--------------------------------------------------------------------------------------------------
+ * 
+ * Slim Framework custom view for Twig by Codeguy
+ * Version : 0.1.2
+ * Website : https://github.com/codeguy/Slim-Views
+ */
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
 );
