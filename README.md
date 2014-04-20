@@ -24,5 +24,5 @@ Uncomment the "'cache' => DIR_CACHE" line in index.php (line 156) if you want Tw
 
 VERSION HISTORY
 =============
-2014-04-20 : v1.0 is available : https://github.com/bpoinsot/slim-skeleton/tree/v1.0
+2014-04-20 : v1.0 is available : https://github.com/bpoinsot/slim-skeleton/releases/tag/v1.0
 
