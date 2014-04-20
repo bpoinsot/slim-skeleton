@@ -20,3 +20,9 @@ Remove the .ovhconfig file if your website is not hosted at OVH using a shared h
 TWIG CACHING
 =============
 Uncomment the "'cache' => DIR_CACHE" line in index.php (line 156) if you want Twig to display compiled templates (and speed up the rendering a little bit).
+
+
+VERSION HISTORY
+=============
+2014-04-20 : v1.0 is available : https://github.com/bpoinsot/slim-skeleton/tree/v1.0
+
