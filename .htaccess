@@ -13,8 +13,14 @@ SetEnv SESSION_USE_TRANS_SID 0
 </FilesMatch>
 
 <IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
+
     RewriteEngine On
+
     RewriteBase /slim-skeleton/
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [QSA,L]
