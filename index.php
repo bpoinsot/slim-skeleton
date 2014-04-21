@@ -169,7 +169,7 @@ $view->parserOptions = array(
 
 /*
  *--------------------------------------------------------------------------------------------------
- * SLIM CUSTOM VIEW FRO TWIG
+ * SLIM CUSTOM VIEW FOR TWIG
  *--------------------------------------------------------------------------------------------------
  * 
  * Slim Framework custom view for Twig by Codeguy
