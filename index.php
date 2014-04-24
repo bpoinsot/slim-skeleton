@@ -47,7 +47,7 @@ if (in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', '::1'))) {
  *--------------------------------------------------------------------------------------------------
  * 
  * We define the project structure in order to customize it easily to fit your needs and is assumed 
- * to be fully compliant with the great Twitter Bootstrap :
+ * to be fully compliant with the great Twitter Bootstrap (http://getbootstrap.com/) :
  * 
  *  /                   defined as DIR_BASE
  *  ├── app/            defined as DIR_APP
