@@ -149,7 +149,7 @@ $app = new \Slim\Slim(array(
 ));
 
 # CSRF Token - https://github.com/codeguy/Slim-Extras/tree/develop/Middleware
-$app->add(new \Slim\Extras\Middleware\CsrfGuard());
+# $app->add(new \Slim\Extras\Middleware\CsrfGuard());
 // --------------------------------------------------------------------------------------------------------------------------
 
 
@@ -229,9 +229,19 @@ $app->expires('-1 week');
  * WEBSITE ROUTES
  *---------------------------------------------------------------------------------------------------------------------------
  */
-$app->get('/', function () use ($app) {
+$app->map('/', function () use ($app) {
     $app->render('index.html');
-})->name('index');
+})->via('GET', 'POST')->name('index');
+
+$app->group('/admin', function () use ($app) {
+    $app->map('/', function () use ($app) {
+        $app->redirect($app->urlFor('admin-index'));
+    })->via('GET', 'POST');
+
+    $app->map('/index.html', function () use ($app) {
+        $app->render('index.html');
+    })->via('GET', 'POST')->name('admin-index');
+});
 // --------------------------------------------------------------------------------------------------------------------------
 
 
