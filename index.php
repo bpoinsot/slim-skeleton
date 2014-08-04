@@ -91,7 +91,7 @@ define('DIR_VENDORS', DIR_APP . 'vendors' . DIR_SEP);
  * updated quickly and easily if needed.
  */
 define('APP_BASE', '/slim-skeleton');    # no trailing slash
-define('APP_NAME', 'slim-skeleton"');
+define('APP_NAME', 'slim-skeleton');
 define('APP_DESC', 'slim skeleton app');
 define('APP_AUTH', '@bpoinsot');
 // --------------------------------------------------------------------------------------------------------------------------
