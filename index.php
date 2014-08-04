@@ -90,10 +90,10 @@ define('DIR_VENDORS', DIR_APP . 'vendors' . DIR_SEP);
  * We need to define several constants in order to use them with the template engine and get them 
  * updated quickly and easily if needed.
  */
-define('APP_BASE', '/skeleton');    # no trailing slash
-define('APP_NAME', 'skeleton"');
-define('APP_DESC', 'skeleton app');
-define('APP_AUTH', 'P. Benjamin');
+define('APP_BASE', '/slim-skeleton');    # no trailing slash
+define('APP_NAME', 'slim-skeleton"');
+define('APP_DESC', 'slim skeleton app');
+define('APP_AUTH', '@bpoinsot');
 // --------------------------------------------------------------------------------------------------------------------------
 
 
@@ -135,7 +135,7 @@ R::freeze(true);
  * 
  * Slim Framework is a small but powerful PHP framework
  * Version : 2.4.3
- * Website : http://slimframework.com
+ * Website : https://github.com/codeguy/Slim
  */
 require DIR_VENDORS . 'Slim/Slim.php';
 
@@ -147,9 +147,6 @@ $app = new \Slim\Slim(array(
     'templates.path' => DIR_LAYOUTS,
     'routes.case_sensitive' => true
 ));
-
-# CSRF Token - https://github.com/codeguy/Slim-Extras/tree/develop/Middleware
-# $app->add(new \Slim\Extras\Middleware\CsrfGuard());
 // --------------------------------------------------------------------------------------------------------------------------
 
 
@@ -183,7 +180,7 @@ $view->parserOptions = array(
  * 
  * Slim Framework custom view for Twig by codeguy
  * Version : 0.1.2
- * Website : https://github.com/codeguy/Slim-Views
+ * Website : https://github.com/codeguy/Slim-Views/tree/develop
  */
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension()
@@ -281,4 +278,4 @@ $app->run();
  * THE END
  *---------------------------------------------------------------------------------------------------------------------------
  */
- ?>
+?>
