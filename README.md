@@ -7,7 +7,7 @@ I did it for (french) [my blog](http://poinsot.info/). No new post for a while, 
 
 USING
 =============
- * Slim Framework : http://www.slimframework.com/
+ * Slim Framework : http://www.slimframework.com
  * Slim Views : https://github.com/codeguy/Slim-Views
  * Twig : http://twig.sensiolabs.org
  * Redbean : http://redbeanphp.com
