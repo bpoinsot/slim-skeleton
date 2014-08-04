@@ -1,15 +1,17 @@
 DESCRIPTION
 =============
-This is my version of a Slim Framework Skeleton Application.
+This is my version of a Slim Framework Skeleton Application (for a [shared hosting at OVH](http://www.ovh.com/fr/hebergement-web/) with PHP & PHP-FPM).
+
+I did it for (french) [my blog](http://poinsot.info/). No new post for a while, sorry...
 
 
 USING
 =============
  * Slim Framework : http://www.slimframework.com/
  * Slim Views : https://github.com/codeguy/Slim-Views
- * Twig : http://twig.sensiolabs.org/
- * Redbean : http://redbeanphp.com/
- * Twitter Bootstrap : http://getbootstrap.com/
+ * Twig : http://twig.sensiolabs.org
+ * Redbean : http://redbeanphp.com
+ * Twitter Bootstrap : http://getbootstrap.com
 
 
 PHP-FPM & OVH
@@ -24,5 +26,7 @@ Uncomment the "'cache' => DIR_CACHE" line in index.php (line 156) if you want Tw
 
 VERSION HISTORY
 =============
-2014-04-20 : v1.0 is available : https://github.com/bpoinsot/slim-skeleton/releases/tag/v1.0
+ * Lastest version : Click [here](https://github.com/bpoinsot/slim-skeleton/releases/latest)
+ * Version history : Click [here](https://github.com/bpoinsot/slim-skeleton/releases)
+
 
