@@ -26,7 +26,7 @@ Uncomment the "'cache' => DIR_CACHE" line in index.php (line 156) if you want Tw
 
 VERSION HISTORY
 =============
- * Lastest version : Click [here](https://github.com/bpoinsot/slim-skeleton/releases/latest)
- * Version history : Click [here](https://github.com/bpoinsot/slim-skeleton/releases)
+ * Latest version : Click [here](https://github.com/bpoinsot/slim-skeleton/releases/latest)
+ * Version history: Click [here](https://github.com/bpoinsot/slim-skeleton/releases)
 
 
