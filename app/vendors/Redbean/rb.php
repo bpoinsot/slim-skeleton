@@ -9723,7 +9723,7 @@ class DuplicationManager
 			$this->columns = array();
 		}
 
-		return $this->duplicate( $rs, $trail, $preserveIDs );
+		return $rs;
 	}
 
 	/**
