@@ -216,7 +216,7 @@ $app->hook('slim.before', function () use ($app) {
  *
  */
 $app->response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0');
-$app->expires('-1 week');
+$app->expires('-1 year');
 // --------------------------------------------------------------------------------------------------------------------------
 
 
