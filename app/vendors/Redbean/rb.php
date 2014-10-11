@@ -4799,13 +4799,12 @@ class MySQL extends AQueryWriter implements QueryWriter
 			}
 		}
 
-		$value = strval( $value );
+		//setter turns TRUE FALSE into 0 and 1 because database has no real bools (TRUE and FALSE only for test?).
+		if ( $value === FALSE || $value === TRUE || $value === '0' || $value === '1' ) {
+			return MySQL::C_DATATYPE_BOOL;
+		}
 
 		if ( !$this->startsWithZeros( $value ) ) {
-
-			if ( $value === TRUE || $value === FALSE || $value === '1' || $value === '' || $value === '0') {
-				return MySQL::C_DATATYPE_BOOL;
-			}
 
 			if ( is_numeric( $value ) && ( floor( $value ) == $value ) && $value >= 0 && $value <= 4294967295 ) {
 				return MySQL::C_DATATYPE_UINT32;
@@ -5243,13 +5242,13 @@ class SQLiteT extends AQueryWriter implements QueryWriter
 	{
 		$this->svalue = $value;
 
-		if ( $value === FALSE ) return self::C_DATATYPE_INTEGER;
-
 		if ( $value === NULL ) return self::C_DATATYPE_INTEGER;
 
 		if ( $this->startsWithZeros( $value ) ) return self::C_DATATYPE_TEXT;
 
-		if ( is_numeric( $value ) && ( intval( $value ) == $value ) && $value < 2147483648 ) return self::C_DATATYPE_INTEGER;
+		if ( $value === TRUE || $value === FALSE )  return self::C_DATATYPE_INTEGER;
+		
+		if ( is_numeric( $value ) && ( intval( $value ) == $value ) && $value < 2147483648 && $value > -2147483648 ) return self::C_DATATYPE_INTEGER;
 
 		if ( ( is_numeric( $value ) && $value < 2147483648 )
 			|| preg_match( '/\d{4}\-\d\d\-\d\d/', $value )
@@ -5517,7 +5516,7 @@ class PostgreSQL extends AQueryWriter implements QueryWriter
 				LEFT OUTER JOIN pg_class c2 ON cons.confrelid = c2.oid
 				LEFT OUTER JOIN pg_namespace n2 ON n2.oid = c2.relnamespace
 				WHERE c.relkind = 'r'
-					AND n.nspname IN ('public')
+					AND n.nspname = ANY( current_schemas( FALSE ) )
 					AND (cons.contype = 'f' OR cons.contype IS NULL)
 					AND (  cons.conname = '{$fkCode}a'	OR  cons.conname = '{$fkCode}b' )
 			";
@@ -5589,7 +5588,7 @@ class PostgreSQL extends AQueryWriter implements QueryWriter
 	 */
 	public function getTables()
 	{
-		return $this->adapter->getCol( "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'" );
+		return $this->adapter->getCol( 'SELECT table_name FROM information_schema.tables WHERE table_schema = ANY( current_schemas( FALSE ) )' );
 	}
 
 	/**
@@ -5656,13 +5655,9 @@ class PostgreSQL extends AQueryWriter implements QueryWriter
 			}
 		}
 
-		$sz = ( $this->startsWithZeros( $value ) );
+		if ( $this->startsWithZeros( $value ) ) return self::C_DATATYPE_TEXT; 
 
-		if ( $sz ) {
-			return self::C_DATATYPE_TEXT;
-		}
-
-		if ( $value === NULL || ( $value instanceof NULL ) || ( is_numeric( $value )
+		if ( $value === FALSE || $value === TRUE || $value === NULL || ( $value instanceof NULL ) || ( is_numeric( $value )
 				&& floor( $value ) == $value
 				&& $value < 2147483648
 				&& $value > -2147483648 )
@@ -5793,7 +5788,7 @@ class PostgreSQL extends AQueryWriter implements QueryWriter
 				FROM information_schema.KEY_COLUMN_USAGE
 			WHERE
 				table_catalog = ?
-				AND table_schema = \'public\'
+				AND table_schema = ANY( current_schemas( FALSE ) )
 				AND table_name = ?
 				AND column_name = ?
 		', array($db, $type, $field));
