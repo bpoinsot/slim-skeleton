@@ -1,6 +1,6 @@
 DESCRIPTION
 =============
-This is my version of a Slim Framework Skeleton Application (for a [shared hosting at OVH](http://www.ovh.com/fr/hebergement-web/) with PHP & PHP-FPM - works fine on other hosting companies).
+This is my version of a Slim Framework Skeleton Application (for a [shared hosting at OVH](http://www.ovh.com/fr/hebergement-web/) with PHP & PHP-FPM - works fine on other hosting companies - if it doesn't, let me know).
 
 I did it for my (french) [blog](http://poinsot.info). No new post for a while, sorry... I'm currently working on a brand new version.
 
@@ -12,7 +12,7 @@ USING
  * Slim Views : https://github.com/codeguy/Slim-Views
  * Twig : http://twig.sensiolabs.org
  * Redbean : http://redbeanphp.com
- * Twitter Bootstrap : http://getbootstrap.com
+ * Twitter Bootstrap : http://getbootstrap.com (not included on the repository)
 
 
 PHP-FPM & OVH
@@ -22,11 +22,14 @@ Remove the .ovhconfig file if your website is not hosted at OVH using a shared h
 
 TWIG CACHING
 =============
-Uncomment the "'cache' => DIR_CACHE" line in index.php (line 170) if you want Twig to display compiled templates (and speed up the rendering).
+Uncomment the "'cache' => DIR_CACHE" line in index.php (line 170) if you want Twig to display compiled templates (and speed up the rendering, for production environment).
 
 
 VERSION HISTORY
 =============
- * Click [here](https://github.com/bpoinsot/slim-skeleton/releases)
+Click [here](https://github.com/bpoinsot/slim-skeleton/releases)
 
 
+COMMENTS
+=============
+Feel free to contact me for any suggestion : github[at]poinsot.cc
