@@ -117,7 +117,7 @@ session_start();
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * RedBeanPHP is a lightweight, configuration-less ORM library for PHP
- * Version : 4.1.1
+ * Version : 4.1.2
  * Website : http://www.redbeanphp.com
  */
 require DIR_VENDORS . 'Redbean/rb.php';

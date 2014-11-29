@@ -2431,13 +2431,15 @@ class OODBBean implements\IteratorAggregate,\ArrayAccess,\Countable
 				$firstKey = key( $this->withParams );
 			}
 
+			$joinSql = $this->parseJoin( $type );
+
 			if ( !is_numeric( $firstKey ) || $firstKey === NULL ) {
 					$bindings           = $this->withParams;
 					$bindings[':slot0'] = $this->getID();
-					$count              = $this->beanHelper->getToolbox()->getWriter()->queryRecordCount( $type, array(), " $myFieldLink = :slot0 " . $this->withSql, $bindings );
+					$count              = $this->beanHelper->getToolbox()->getWriter()->queryRecordCount( $type, array(), " {$joinSql} $myFieldLink = :slot0 " . $this->withSql, $bindings );
 			} else {
 					$bindings = array_merge( array( $this->getID() ), $this->withParams );
-					$count    = $this->beanHelper->getToolbox()->getWriter()->queryRecordCount( $type, array(), " $myFieldLink = ? " . $this->withSql, $bindings );
+					$count    = $this->beanHelper->getToolbox()->getWriter()->queryRecordCount( $type, array(), " {$joinSql} $myFieldLink = ? " . $this->withSql, $bindings );
 			}
 
 		}
@@ -4780,6 +4782,7 @@ class MySQL extends AQueryWriter implements QueryWriter
 		$this->svalue = $value;
 
 		if ( is_null( $value ) ) return MySQL::C_DATATYPE_BOOL;
+		if ( $value === INF ) return MySQL::C_DATATYPE_TEXT8;
 
 		if ( $flagSpecial ) {
 			if ( preg_match( '/^\d{4}\-\d\d-\d\d$/', $value ) ) {
@@ -5243,6 +5246,7 @@ class SQLiteT extends AQueryWriter implements QueryWriter
 		$this->svalue = $value;
 
 		if ( $value === NULL ) return self::C_DATATYPE_INTEGER;
+		if ( $value === INF ) return self::C_DATATYPE_TEXT;
 
 		if ( $this->startsWithZeros( $value ) ) return self::C_DATATYPE_TEXT;
 
@@ -5250,7 +5254,7 @@ class SQLiteT extends AQueryWriter implements QueryWriter
 		
 		if ( is_numeric( $value ) && ( intval( $value ) == $value ) && $value < 2147483648 && $value > -2147483648 ) return self::C_DATATYPE_INTEGER;
 
-		if ( ( is_numeric( $value ) && $value < 2147483648 )
+		if ( ( is_numeric( $value ) && $value < 2147483648 && $value > -2147483648)
 			|| preg_match( '/\d{4}\-\d\d\-\d\d/', $value )
 			|| preg_match( '/\d{4}\-\d\d\-\d\d\s\d\d:\d\d:\d\d/', $value )
 		) {
@@ -5624,6 +5628,8 @@ class PostgreSQL extends AQueryWriter implements QueryWriter
 	public function scanType( $value, $flagSpecial = FALSE )
 	{
 		$this->svalue = $value;
+
+		if ( $value === INF ) return self::C_DATATYPE_TEXT;
 
 		if ( $flagSpecial && $value ) {
 			if ( preg_match( '/^\d{4}\-\d\d-\d\d$/', $value ) ) {
@@ -9092,12 +9098,12 @@ class Facade
 	/**
 	 * @var array
 	 */
-	private static $toolboxes = array();
+	public static $toolboxes = array();
 
 	/**
 	 * @var ToolBox
 	 */
-	private static $toolbox;
+	public static $toolbox;
 
 	/**
 	 * @var OODB
@@ -9142,7 +9148,7 @@ class Facade
 	/**
 	 * @var string
 	 */
-	private static $currentDB = '';
+	public static $currentDB = '';
 
 	/**
 	 * @var array
@@ -11051,7 +11057,7 @@ class DuplicationManager
 			}
 		}
 
-		$rs = $this->duplicate( clone( $bean ), $trail, $preserveIDs );
+		$rs = $this->duplicate( ( clone $bean ), $trail, $preserveIDs );
 
 		if ( !$this->cacheTables ) {
 			$this->tables  = array();
