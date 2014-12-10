@@ -117,7 +117,7 @@ session_start();
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * RedBeanPHP is a lightweight, configuration-less ORM library for PHP
- * Version : 4.1.2
+ * Version : 4.1.3
  * Website : http://www.redbeanphp.com
  */
 require DIR_VENDORS . 'Redbean/rb.php';
@@ -179,7 +179,7 @@ $view->parserOptions = array(
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * Slim Framework custom view for Twig by codeguy
- * Version : 0.1.2
+ * Version : 0.1.3
  * Website : https://github.com/codeguy/Slim-Views/tree/develop
  */
 $view->parserExtensions = array(
