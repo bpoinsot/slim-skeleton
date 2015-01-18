@@ -117,7 +117,7 @@ session_start();
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * RedBeanPHP is a lightweight, configuration-less ORM library for PHP
- * Version : 4.1.3
+ * Version : 4.1.4
  * Website : http://www.redbeanphp.com
  */
 require DIR_VENDORS . 'Redbean/rb.php';
@@ -157,7 +157,7 @@ $app = new \Slim\Slim(array(
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * Twig is a modern template engine for PHP
- * Version : 1.16.3
+ * Version : 1.17.0
  * Website : http://twig.sensiolabs.org
  */
 $view = $app->view();
