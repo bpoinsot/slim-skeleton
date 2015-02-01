@@ -157,7 +157,7 @@ $app = new \Slim\Slim(array(
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * Twig is a modern template engine for PHP
- * Version : 1.17.0
+ * Version : 1.18.0
  * Website : http://twig.sensiolabs.org
  */
 $view = $app->view();

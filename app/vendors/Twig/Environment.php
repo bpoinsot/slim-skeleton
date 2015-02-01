@@ -16,7 +16,7 @@
  */
 class Twig_Environment
 {
-    const VERSION = '1.17.0';
+    const VERSION = '1.18.0';
 
     protected $charset;
     protected $loader;
@@ -155,7 +155,7 @@ class Twig_Environment
     /**
      * Checks if debug mode is enabled.
      *
-     * @return bool    true if debug mode is enabled, false otherwise
+     * @return bool true if debug mode is enabled, false otherwise
      */
     public function isDebug()
     {
@@ -181,7 +181,7 @@ class Twig_Environment
     /**
      * Checks if the auto_reload option is enabled.
      *
-     * @return bool    true if auto_reload is enabled, false otherwise
+     * @return bool true if auto_reload is enabled, false otherwise
      */
     public function isAutoReload()
     {
@@ -207,7 +207,7 @@ class Twig_Environment
     /**
      * Checks if the strict_variables option is enabled.
      *
-     * @return bool    true if strict_variables is enabled, false otherwise
+     * @return bool true if strict_variables is enabled, false otherwise
      */
     public function isStrictVariables()
     {
@@ -256,8 +256,8 @@ class Twig_Environment
     /**
      * Gets the template class associated with the given string.
      *
-     * @param string  $name  The name for which to calculate the template class name
-     * @param int     $index The index if it is an embedded template
+     * @param string $name  The name for which to calculate the template class name
+     * @param int    $index The index if it is an embedded template
      *
      * @return string The template class name
      */
@@ -311,8 +311,8 @@ class Twig_Environment
     /**
      * Loads a template by name.
      *
-     * @param string  $name  The template name
-     * @param int     $index The index if it is an embedded template
+     * @param string $name  The template name
+     * @param int    $index The index if it is an embedded template
      *
      * @return Twig_TemplateInterface A template instance representing the given template name
      *
@@ -347,16 +347,51 @@ class Twig_Environment
     }
 
     /**
+     * Creates a template from source.
+     *
+     * This method should not be used as a generic way to load templates.
+     *
+     * @param string $name  The template name
+     * @param int    $index The index if it is an embedded template
+     *
+     * @return Twig_Template A template instance representing the given template name
+     *
+     * @throws Twig_Error_Loader When the template cannot be found
+     * @throws Twig_Error_Syntax When an error occurred during compilation
+     */
+    public function createTemplate($template)
+    {
+        $name = sprintf('__string_template__%s', hash('sha256', uniqid(mt_rand(), true), false));
+
+        $loader = new Twig_Loader_Chain(array(
+            new Twig_Loader_Array(array($name => $template)),
+            $current = $this->getLoader(),
+        ));
+
+        $this->setLoader($loader);
+        try {
+            $template = $this->loadTemplate($name);
+        } catch (Exception $e) {
+            $this->setLoader($current);
+
+            throw $e;
+        }
+        $this->setLoader($current);
+
+        return $template;
+    }
+
+    /**
      * Returns true if the template is still fresh.
      *
      * Besides checking the loader for freshness information,
      * this method also checks if the enabled extensions have
      * not changed.
      *
-     * @param string    $name The template name
-     * @param int       $time The last modification time of the cached template
+     * @param string $name The template name
+     * @param int    $time The last modification time of the cached template
      *
-     * @return bool    true if the template is fresh, false otherwise
+     * @return bool true if the template is fresh, false otherwise
      */
     public function isTemplateFresh($name, $time)
     {
@@ -627,7 +662,7 @@ class Twig_Environment
      *
      * @param string $name The extension name
      *
-     * @return bool    Whether the extension is registered or not
+     * @return bool Whether the extension is registered or not
      */
     public function hasExtension($name)
     {
