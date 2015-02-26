@@ -231,22 +231,22 @@ class Slim
 
     public function __get($name)
     {
-        return $this->container[$name];
+        return $this->container->get($name);
     }
 
     public function __set($name, $value)
     {
-        $this->container[$name] = $value;
+        $this->container->set($name, $value);
     }
 
     public function __isset($name)
     {
-        return isset($this->container[$name]);
+        return $this->container->has($name);
     }
 
     public function __unset($name)
     {
-        unset($this->container[$name]);
+        $this->container->remove($name);
     }
 
     /**
@@ -906,7 +906,12 @@ class Slim
             }
         }
 
-        return $value;
+        /*
+         * transform $value to @return doc requirement.
+         * \Slim\Http\Util::decodeSecureCookie -  is able
+         * to return false and we have to cast it to null.
+         */
+        return $value === false ? null : $value;
     }
 
     /**
@@ -1150,6 +1155,16 @@ class Slim
         }
     }
 
+    /**
+     * Get all flash messages
+     */
+    public function flashData()
+    {
+        if (isset($this->environment['slim.flash'])) {
+            return $this->environment['slim.flash']->getMessages();
+        }
+    }
+
     /********************************************************************************
     * Hooks
     *******************************************************************************/
@@ -1172,10 +1187,10 @@ class Slim
 
     /**
      * Invoke hook
-     * @param  string   $name       The hook name
-     * @param  mixed    $hookArg    (Optional) Argument for hooked functions
+     * @param  string $name The hook name
+     * @param  mixed  ...   (Optional) Argument(s) for hooked functions, can specify multiple arguments
      */
-    public function applyHook($name, $hookArg = null)
+    public function applyHook($name)
     {
         if (!isset($this->hooks[$name])) {
             $this->hooks[$name] = array(array());
@@ -1185,10 +1200,14 @@ class Slim
             if (count($this->hooks[$name]) > 1) {
                 ksort($this->hooks[$name]);
             }
+
+            $args = func_get_args();
+            array_shift($args);
+
             foreach ($this->hooks[$name] as $priority) {
                 if (!empty($priority)) {
                     foreach ($priority as $callable) {
-                        call_user_func($callable, $hookArg);
+                        call_user_func_array($callable, $args);
                     }
                 }
             }
@@ -1356,6 +1375,7 @@ class Slim
                 throw $e;
             } else {
                 try {
+                    $this->response()->write(ob_get_clean());
                     $this->error($e);
                 } catch (\Slim\Exception\Stop $e) {
                     // Do nothing

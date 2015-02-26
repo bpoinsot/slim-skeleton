@@ -140,7 +140,10 @@ class Environment implements \ArrayAccess, \IteratorAggregate
             $env['SCRIPT_NAME'] = rtrim($physicalPath, '/'); // <-- Remove trailing slashes
 
             // Virtual path
-            $env['PATH_INFO'] = substr_replace($requestUri, '', 0, strlen($physicalPath)); // <-- Remove physical path
+            $env['PATH_INFO'] = $requestUri;
+            if (substr($requestUri, 0, strlen($physicalPath)) == $physicalPath) {
+                $env['PATH_INFO'] = substr($requestUri, strlen($physicalPath)); // <-- Remove physical path
+            }
             $env['PATH_INFO'] = str_replace('?' . $queryString, '', $env['PATH_INFO']); // <-- Remove query string
             $env['PATH_INFO'] = '/' . ltrim($env['PATH_INFO'], '/'); // <-- Ensure leading slash
 
@@ -191,9 +194,9 @@ class Environment implements \ArrayAccess, \IteratorAggregate
     {
         if (isset($this->properties[$offset])) {
             return $this->properties[$offset];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
