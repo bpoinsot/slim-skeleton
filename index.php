@@ -124,6 +124,7 @@ require DIR_VENDORS . 'Redbean/rb.php';
 
 R::setup('sqlite:' . DIR_APP . 'db.sqlite');
 R::freeze(true);
+if ($debug === true) { R::debug(TRUE, 2); } else { R::debug(FALSE); }
 // --------------------------------------------------------------------------------------------------------------------------
 
 
