@@ -135,8 +135,8 @@ if ($debug === true) { R::debug(TRUE, 2); } else { R::debug(FALSE); }
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * Slim Framework is a small but powerful PHP framework
- * Version : 2.4.3
- * Website : https://github.com/codeguy/Slim
+ * Version : 2.6.1
+ * Website : https://github.com/slimphp/Slim
  */
 require DIR_VENDORS . 'Slim/Slim.php';
 
@@ -180,8 +180,8 @@ $view->parserOptions = array(
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * Slim Framework custom view for Twig by codeguy
- * Version : 0.1.3
- * Website : https://github.com/codeguy/Slim-Views/tree/develop
+ * Version : 0.1.3 (develop)
+ * Website : https://github.com/slimphp/Slim-Views
  */
 $view->parserExtensions = array(
     new \Slim\Views\TwigExtension()

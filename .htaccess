@@ -1,4 +1,4 @@
-# Apache Server Configs v2.11.0 | MIT License
+# Apache Server Configs v2.12.0 | MIT License
 # https://github.com/h5bp/server-configs-apache
 
 # (!) Using `.htaccess` files slows down Apache, therefore, if you have
@@ -167,10 +167,12 @@ Options -MultiViews
 
   # Data interchange
 
+    AddType application/atom+xml                        atom
     AddType application/json                            json map topojson
     AddType application/ld+json                         jsonld
+    AddType application/rss+xml                         rss
     AddType application/vnd.geo+json                    geojson
-    AddType application/xml                             atom rdf rss xml
+    AddType application/xml                             rdf xml
 
 
   # JavaScript
@@ -262,7 +264,6 @@ Options -MultiViews
     AddType application/x-chrome-extension              crx
     AddType application/x-opera-extension               oex
     AddType application/x-xpinstall                     xpi
-    AddType text/html                                   php
     AddType text/vcard                                  vcard vcf
     AddType text/vnd.rim.location.xloc                  xloc
     AddType text/vtt                                    vtt
@@ -711,6 +712,16 @@ AddDefaultCharset utf-8
 # | Server software information                                        |
 # ----------------------------------------------------------------------
 
+# Prevent Apache from adding a trailing footer line containing
+# information about the server to the server-generated documents
+# (e.g.: error messages, directory listings, etc.)
+#
+# https://httpd.apache.org/docs/current/mod/core.html#serversignature
+
+ServerSignature Off
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # Prevent Apache from sending in the `Server` response header its
 # exact version number, the description of the generic OS-type or
 # information about its compiled-in modules.
@@ -720,7 +731,7 @@ AddDefaultCharset utf-8
 #
 # https://httpd.apache.org/docs/current/mod/core.html#servertokens
 
-# ServerTokens Prod
+#ServerTokens Prod
 
 
 # ######################################################################
