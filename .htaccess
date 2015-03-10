@@ -1027,3 +1027,15 @@ SetEnv SESSION_USE_TRANS_SID 0
     Deny from all
     Satisfy All
 </FilesMatch>
+
+# For security reasons, we deny access to .DS_Store files
+<FilesMatch "^\\.[Dd][Ss]_[Ss]">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# For security reasons we deny access to Thumbs.db files
+<FilesMatch "\.[Dd][Bb]">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
