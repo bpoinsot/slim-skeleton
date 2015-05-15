@@ -522,6 +522,7 @@ namespace RedBeanPHP\Driver {
 use RedBeanPHP\Driver as Driver;
 use RedBeanPHP\Logger as Logger;
 use RedBeanPHP\QueryWriter\AQueryWriter as AQueryWriter;
+use RedBeanPHP\RedException as RedException;
 use RedBeanPHP\RedException\SQL as SQL;
 use RedBeanPHP\Logger\RDefault as RDefault;
 use RedBeanPHP\PDOCompatible as PDOCompatible;
@@ -659,7 +660,11 @@ class RPDO implements Driver
 		}
 		try {
 			if ( strpos( 'pgsql', $this->dsn ) === 0 ) {
-				$statement = $this->pdo->prepare( $sql, array( \PDO::PGSQL_ATTR_DISABLE_NATIVE_PREPARED_STATEMENT => TRUE ) );
+				if ( defined( '\PDO::PGSQL_ATTR_DISABLE_NATIVE_PREPARED_STATEMENT' ) ) {
+					$statement = $this->pdo->prepare( $sql, array( \PDO::PGSQL_ATTR_DISABLE_NATIVE_PREPARED_STATEMENT => TRUE ) );
+				} else {
+					$statement = $this->pdo->prepare( $sql );
+				}
 			} else {
 				$statement = $this->pdo->prepare( $sql );
 			}
@@ -738,7 +743,7 @@ class RPDO implements Driver
 		}
 
 		//PHP 5.3 PDO SQLite has a bug with large numbers:
-		if ( ( strpos( $this->dsn, 'sqlite' ) === 0 && PHP_MAJOR_VERSION === 5 && PHP_MINOR_VERSION === 3 ) || $this->dsn === 'test-sqlite-53' ) {
+		if ( ( strpos( $this->dsn, 'sqlite' ) === 0 && PHP_MAJOR_VERSION === 5 && PHP_MINOR_VERSION === 3 ) ||  defined('HHVM_VERSION') || $this->dsn === 'test-sqlite-53' ) {
 			$this->max = 2147483647; //otherwise you get -2147483648 ?! demonstrated in build #603 on Travis.
 		} elseif ( strpos( $this->dsn, 'cubrid' ) === 0 ) {
 			$this->max = 2147483647; //bindParam in pdo_cubrid also fails...
@@ -769,6 +774,26 @@ class RPDO implements Driver
 	public function setUseStringOnlyBinding( $yesNo )
 	{
 		$this->flagUseStringOnlyBinding = (boolean) $yesNo;
+	}
+
+	/**
+	 * Sets the maximum value to be bound as integer, normally
+	 * this value equals PHP's MAX INT constant, however sometimes
+	 * PDO driver bindings cannot bind large integers as integers.
+	 * This method allows you to manually set the max integer binding
+	 * value to manage portability/compatibility issues among different
+	 * PHP builds. This method will return the old value.
+	 *
+	 * @param integer $max maximum value for integer bindings
+	 *
+	 * @return integer
+	 */
+	public function setMaxIntBind( $max )
+	{
+		if ( !is_integer( $max ) ) throw new RedException( 'Parameter has to be integer.' );
+		$oldMax = $this->max;
+		$this->max = $max;
+		return $oldMax;
 	}
 
 	/**
@@ -6566,10 +6591,10 @@ class SQL extends RedException
 	}
 
 	/**
-	 * @todo parse state to verify valid ANSI92!
-	 *       Stores ANSI-92 compliant SQL state.
+	 * Returns the raw SQL STATE, possibly compliant with
+	 * ANSI SQL error codes - but this depends on database driver.
 	 *
-	 * @param string $sqlState code
+	 * @param string $sqlState SQL state error code
 	 *
 	 * @return void
 	 */
@@ -7509,7 +7534,6 @@ class Fluid extends Repository
 				)
 				) {
 					$rows = 0;
-
 				}
 			}
 			if ( empty( $rows ) ) {
@@ -8829,10 +8853,10 @@ class AssociationManager extends Observable
 	 * Returns the many-to-many related rows of table $type for bean $bean using additional SQL in $sql and
 	 * $bindings bindings. If $getLinks is TRUE, link rows are returned instead.
 	 *
-	 * @param OODBBean $bean     reference bean
-	 * @param string           $type     target type
-	 * @param string           $sql      additional SQL snippet
-	 * @param array            $bindings bindings
+	 * @param OODBBean $bean     reference bean instance
+	 * @param string   $type     target bean type
+	 * @param string   $sql      additional SQL snippet
+	 * @param array    $bindings bindings for query
 	 *
 	 * @return array
 	 *
@@ -9100,25 +9124,17 @@ class AssociationManager extends Observable
 	public function related( $bean, $type, $sql = '', $bindings = array() )
 	{
 		$sql   = $this->writer->glueSQLCondition( $sql );
-
 		$rows  = $this->relatedRows( $bean, $type, $sql, $bindings );
-
 		$links = array();
+
 		foreach ( $rows as $key => $row ) {
-			if ( !isset( $links[$row['id']] ) ) {
-				$links[$row['id']] = array();
-			}
-
+			if ( !isset( $links[$row['id']] ) ) $links[$row['id']] = array();
 			$links[$row['id']][] = $row['linked_by'];
-
 			unset( $rows[$key]['linked_by'] );
 		}
 
 		$beans = $this->oodb->convertToBeans( $type, $rows );
-
-		foreach ( $beans as $bean ) {
-			$bean->setMeta( 'sys.belongs-to', $links[$bean->id] );
-		}
+		foreach ( $beans as $bean ) $bean->setMeta( 'sys.belongs-to', $links[$bean->id] );
 
 		return $beans;
 	}
@@ -9173,7 +9189,7 @@ interface BeanHelper
 	 *
 	 * @param OODBBean $bean
 	 *
-	 * @return string
+	 * @return object
 	 */
 	public function getModelForBean( OODBBean $bean );
 }
@@ -10181,9 +10197,9 @@ class Facade
 	 *
 	 * @param string      $key    ID for the database
 	 * @param string      $dsn    DSN for the database
-	 * @param string      $user   User for connection
-	 * @param NULL|string $pass   Password for connection
-	 * @param bool        $frozen Whether this database is frozen or not
+	 * @param string      $user   user for connection
+	 * @param NULL|string $pass   password for connection
+	 * @param bool        $frozen whether this database is frozen or not
 	 *
 	 * @return void
 	 */
@@ -10254,12 +10270,12 @@ class Facade
 	 * R::selectDatabase() this method will throw an exception.
 	 * Returns the attached logger instance.
 	 *
-	 * @param boolean $tf
+	 * @param boolean $tf   debug mode (true or false)
 	 * @param integer $mode (0 = to STDOUT, 1 = to ARRAY)
 	 *
 	 * @throws Security
 	 *
-	 * @return Logger\RDefault
+	 * @return RDefault
 	 */
 	public static function debug( $tf = TRUE, $mode = 0 )
 	{
@@ -10281,6 +10297,14 @@ class Facade
 
 	/**
 	 * Turns on the fancy debugger.
+	 * In 'fancy' mode the debugger will output queries with bound
+	 * parameters inside the SQL itself. This method has been added to
+	 * offer a convenient way to activate the fancy debugger system
+	 * in one call.
+	 *
+	 * @param boolean $toggle TRUE to activate debugger and select 'fancy' mode
+	 *
+	 * @return void
 	 */
 	public static function fancyDebug( $toggle )
 	{
@@ -10926,8 +10950,8 @@ class Facade
 	 * match.
 	 *
 	 * @param  OODBBean $bean bean to check for tags
-	 * @param  array            $tags list of tags
-	 * @param  boolean          $all  whether they must all match or just some
+	 * @param  array    $tags list of tags
+	 * @param  boolean  $all  whether they must all match or just some
 	 *
 	 * @return boolean
 	 */
@@ -10942,7 +10966,7 @@ class Facade
 	 * the second parameter will no longer be associated with the bean.
 	 *
 	 * @param  OODBBean $bean    tagged bean
-	 * @param  array            $tagList list of tags (names)
+	 * @param  array    $tagList list of tags (names)
 	 *
 	 * @return void
 	 */
@@ -10961,7 +10985,7 @@ class Facade
 	 * You may also pass an array instead of a string.
 	 *
 	 * @param OODBBean $bean    bean
-	 * @param mixed            $tagList tags
+	 * @param mixed    $tagList tags
 	 *
 	 * @return string
 	 */
@@ -10978,7 +11002,7 @@ class Facade
 	 * You may also pass an array instead of a string.
 	 *
 	 * @param OODBBean $bean    bean
-	 * @param array            $tagList list of tags to add to bean
+	 * @param array    $tagList list of tags to add to bean
 	 *
 	 * @return void
 	 */
@@ -11138,7 +11162,7 @@ class Facade
 	 * Note that this method only works in fluid mode because it might be
 	 * quite heavy on production servers!
 	 *
-	 * @param  string $table   name of the table (not type) you want to get columns of
+	 * @param  string $table name of the table (not type) you want to get columns of
 	 *
 	 * @return array
 	 */
@@ -11150,7 +11174,7 @@ class Facade
 	/**
 	 * Generates question mark slots for an array of values.
 	 *
-	 * @param array  $array    array to generate question mark slots for
+	 * @param array  $array array to generate question mark slots for
 	 *
 	 * @return string
 	 */
