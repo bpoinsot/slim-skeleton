@@ -7845,6 +7845,24 @@ class OODB extends Observable
 	protected $fluidRepository = NULL;
 
 	/**
+	 * @var boolean
+	 */
+	protected static $autoClearHistoryAfterStore = FALSE;
+
+	/**
+	 * If set to TRUE, this method will call clearHistory every time
+	 * the bean gets stored.
+	 *
+	 * @param boolean $autoClear auto clear option
+	 *
+	 * @return void
+	 */
+	public static function autoClearHistoryAfterStore( $autoClear = TRUE )
+	{
+		self::$autoClearHistoryAfterStore = (boolean) $autoClear;
+	}
+
+	/**
 	 * Unboxes a bean from a FUSE model if needed and checks whether the bean is
 	 * an instance of OODBBean.
 	 *
@@ -8106,7 +8124,11 @@ class OODB extends Observable
 	public function store( $bean )
 	{
 		$bean = $this->unboxIfNeeded( $bean );
-		return $this->repository->store( $bean );
+		$id = $this->repository->store( $bean );
+		if ( self::$autoClearHistoryAfterStore ) {
+				$bean->clearHistory();
+		}
+		return $id;
 	}
 
 	/**
