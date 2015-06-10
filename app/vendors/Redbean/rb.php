@@ -257,7 +257,7 @@ class Debug extends RDefault implements Logger
 	protected function output( $str )
 	{
 		$this->logs[] = $str;
-		if ( !$this->mode ) echo $str .'<br />';
+		if ( !$this->mode ) echo $str ,'<br />';
 	}
 
 	/**
@@ -5413,6 +5413,7 @@ class MySQL extends AQueryWriter implements QueryWriter
 	 */
 	protected function getKeyMapForType( $type )
 	{
+		$databaseName = $this->adapter->getCell('SELECT DATABASE()');
 		$table = $this->esc( $type, TRUE );
 		$keys = $this->adapter->get('
 			SELECT
@@ -5424,17 +5425,15 @@ class MySQL extends AQueryWriter implements QueryWriter
 				information_schema.referential_constraints.delete_rule AS `on_delete`
 				FROM information_schema.key_column_usage
 				INNER JOIN information_schema.referential_constraints
-					ON (
-						information_schema.referential_constraints.constraint_name = information_schema.key_column_usage.constraint_name
-						AND information_schema.referential_constraints.constraint_schema = information_schema.key_column_usage.constraint_schema
-						AND information_schema.referential_constraints.constraint_catalog = information_schema.key_column_usage.constraint_catalog
-					)
+				ON information_schema.referential_constraints.constraint_name = information_schema.key_column_usage.constraint_name
 			WHERE
-				information_schema.key_column_usage.table_schema IN ( SELECT DATABASE() )
-				AND information_schema.key_column_usage.table_name = ?
+				information_schema.key_column_usage.table_schema = :database
+				AND information_schema.referential_constraints.constraint_schema  = :database
+				AND information_schema.key_column_usage.constraint_schema  = :database
+				AND information_schema.key_column_usage.table_name = :table
 				AND information_schema.key_column_usage.constraint_name != \'PRIMARY\'
 				AND information_schema.key_column_usage.referenced_table_name IS NOT NULL
-		', array($table));
+		', array( ':database' => $databaseName, ':table' => $table ) );
 		$keyInfoList = array();
 		foreach ( $keys as $k ) {
 			$label = $this->makeFKLabel( $k['from'], $k['table'], $k['to'] );
