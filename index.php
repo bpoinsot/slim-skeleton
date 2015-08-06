@@ -117,7 +117,7 @@ session_start();
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * RedBeanPHP is a lightweight, configuration-less ORM library for PHP
- * Version : 4.1.4
+ * Version : 4.2.5
  * Website : http://www.redbeanphp.com
  */
 require DIR_VENDORS . 'Redbean/rb.php';
@@ -135,7 +135,7 @@ if ($debug === true) { R::debug(TRUE, 2); } else { R::debug(FALSE); }
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * Slim Framework is a small but powerful PHP framework
- * Version : 2.6.1
+ * Version : 2.6.3
  * Website : https://github.com/slimphp/Slim
  */
 require DIR_VENDORS . 'Slim/Slim.php';
@@ -158,7 +158,7 @@ $app = new \Slim\Slim(array(
  *---------------------------------------------------------------------------------------------------------------------------
  * 
  * Twig is a modern template engine for PHP
- * Version : 1.18.0
+ * Version : 1.19.0
  * Website : http://twig.sensiolabs.org
  */
 $view = $app->view();
