@@ -5731,7 +5731,7 @@ class MySQL extends AQueryWriter implements QueryWriter
 			$this->adapter->exec( "
 				ALTER TABLE {$table}
 				ADD CONSTRAINT $cName
-				FOREIGN KEY $fkName ( {$fieldNoQ} ) REFERENCES {$targetTableNoQ}
+				FOREIGN KEY $fkName ( `{$fieldNoQ}` ) REFERENCES `{$targetTableNoQ}`
 				({$targetFieldNoQ}) ON DELETE " . ( $isDependent ? 'CASCADE' : 'SET NULL' ) . ' ON UPDATE '.( $isDependent ? 'CASCADE' : 'SET NULL' ).';');
 		} catch ( SQLException $e ) {
 			// Failure of fk-constraints is not a problem
@@ -6586,8 +6586,8 @@ class PostgreSQL extends AQueryWriter implements QueryWriter
 
 		foreach ( $this->getTables() as $t ) {
 			$t = $this->esc( $t );
-
-			$this->adapter->exec( "DROP TABLE IF EXISTS $t CASCADE " );
+			//Some plugins (PostGIS have unremovable tables/views), avoid exceptions.
+			try { $this->adapter->exec( "DROP TABLE IF EXISTS $t CASCADE " ); }catch( \Exception $e ) {}
 		}
 
 		$this->adapter->exec( 'SET CONSTRAINTS ALL IMMEDIATE' );
@@ -9204,10 +9204,44 @@ interface BeanHelper
 	/**
 	 * Given a certain bean this method will
 	 * return the corresponding model.
+	 * If no model is returned (NULL), RedBeanPHP might ask again.
+	 *
+	 * @note You can make RedBeanPHP faster by doing the setup wiring yourself.
+	 * The event listeners take time, so to speed-up RedBeanPHP you can
+	 * drop 'FUSE', if you're not interested in the Models.
+	 *
+	 * @note You can do funny stuff with this method but please be careful.
+	 * You *could* create a model depending on properties of the bean, but
+	 * it's a bit well... adventurous, here is an example:
+	 *
+	 * <code>
+	 * class Book extends RedBeanPHP\SimpleModel {};
+	 * class Booklet extends RedBeanPHP\SimpleModel {};
+	 *
+	 * class FlexBeanHelper extends RedBeanPHP\BeanHelper\SimpleFacadeBeanHelper {
+	 *  public function getModelForBean( RedBeanPHP\OODBBean $bean ) {
+	 *   if (!isset($bean->pages)) return NULL; //will ask again
+	 *   if ($bean->pages <= 10) return new Booklet;
+	 *   return new Book;
+	 *	}
+	 * }
+	 *
+	 * $h = new FlexBeanHelper;
+	 * R::getRedBean()->setBeanHelper($h);
+	 * $book = R::dispense('book');
+	 * var_dump($book->box()); //NULL cant reach model
+	 * $book->pages = 5;
+	 * var_dump($book->box()); //Booklet
+	 * $book->pages = 15;
+	 * var_dump($book->box()); //still.. Booklet, model has been set
+	 * $book2 = R::dispense('book');
+	 * $book2->pages = 15;
+	 * var_dump($book2->box()); //Book, more than 10 pages
+	 * </code>
 	 *
 	 * @param OODBBean $bean bean to obtain the corresponding model of
 	 *
-	 * @return SimpleModel|CustomModel
+	 * @return SimpleModel|CustomModel|NULL
 	 */
 	public function getModelForBean( OODBBean $bean );
 }
